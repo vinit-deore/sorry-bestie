@@ -91,6 +91,24 @@ button:hover{transform:translateY(-2px)}
   color:#ddd3e9;
 }
 .signature{margin-top:24px;color:#c9b3ef;font-style:italic}
+
+/* Mobile optimization */
+html,body{width:100%;min-height:100%;overflow-x:hidden}
+.screen{padding:18px;box-sizing:border-box}
+.card{box-sizing:border-box;width:min(100%,720px)}
+@media(max-width:600px){
+  .screen{min-height:100svh;padding:14px;align-items:center}
+  .card{width:100%;padding:26px 18px!important;border-radius:24px}
+  h1{font-size:clamp(2.2rem,12vw,3.6rem)!important;line-height:1.02}
+  h2{font-size:clamp(1.7rem,9vw,2.6rem)!important;line-height:1.08}
+  p{font-size:15px;line-height:1.65}
+  .quote{padding:15px;font-size:14px}
+  .buttons{gap:10px;margin-top:22px}
+  button{min-height:50px;padding:13px 17px;font-size:14px;touch-action:manipulation}
+  #noBtn{z-index:20}
+}
+
+#noBtn.random-float{position:fixed!important;z-index:9999;transition:left .28s ease,top .28s ease,transform .18s ease}
 </style>
 </head>
 <body>
@@ -157,9 +175,12 @@ let noClicks=0;
 function next(n){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('s'+n).classList.add('active');
+  const b=document.getElementById('noBtn');
+  if(b){b.classList.remove('random-float');b.style.left='';b.style.top='';}
   spawn();
 }
 function forgive(){ next(5); for(let i=0;i<22;i++) setTimeout(spawn, i*80); }
+
 function notYet(){
   noClicks++;
   const b=document.getElementById('noBtn'), h=document.getElementById('hint');
@@ -167,14 +188,38 @@ function notYet(){
     "Okay okay… I deserved that 😭",
     "Fair. I'll wait. 🥲",
     "Still here when you're ready.",
-    "Okay, last attempt… please? 🥺"
+    "You really want to make me suffer 😭",
+    "Okay bestie, message received 💀",
+    "I'm not giving up that easily 💜"
   ];
   h.textContent=msgs[Math.min(noClicks-1,msgs.length-1)];
-  if(noClicks>=3){
-    b.textContent="Fine… I'm waiting 🥲";
-    b.style.transform=`translateX(${(Math.random()*80)-40}px)`;
-  }
+
+  // On every click, move to a random position while keeping the button
+  // completely visible on both desktop and mobile.
+  b.classList.add('random-float');
+  const r=b.getBoundingClientRect();
+  const margin=12;
+  const topSafe=window.innerWidth<=600 ? 72 : 24;
+  const maxX=Math.max(margin,window.innerWidth-r.width-margin);
+  const maxY=Math.max(topSafe,window.innerHeight-r.height-margin);
+  const x=margin+Math.random()*Math.max(0,maxX-margin);
+  const y=topSafe+Math.random()*Math.max(0,maxY-topSafe);
+  b.style.left=Math.round(x)+'px';
+  b.style.top=Math.round(y)+'px';
+
+  // Small playful scale on later attempts.
+  b.style.transform=noClicks%2===0?'rotate(-2deg)':'rotate(2deg)';
 }
+
+window.addEventListener('resize',()=>{
+  const b=document.getElementById('noBtn');
+  if(!b || !b.classList.contains('random-float')) return;
+  const r=b.getBoundingClientRect();
+  const x=Math.min(Math.max(10,r.left),Math.max(10,window.innerWidth-r.width-10));
+  const y=Math.min(Math.max(65,r.top),Math.max(65,window.innerHeight-r.height-10));
+  b.style.left=x+'px'; b.style.top=y+'px';
+});
+
 function spawn(){
   const el=document.createElement('div'); el.className='floating';
   el.textContent=['💜','✨','♡','✦'][Math.floor(Math.random()*4)];
