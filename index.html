@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For My Best Friend 💜</title>
+<title>For Kalyani 💜</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap');
 
@@ -108,16 +108,17 @@ html,body{width:100%;min-height:100%;overflow-x:hidden}
   #noBtn{z-index:20}
 }
 
-#noBtn.random-float{position:fixed!important;z-index:9999;transition:left .28s ease,top .28s ease,transform .18s ease}
+#noBtn.random-float{position:fixed!important;z-index:9999;margin:0!important;transition:left .28s cubic-bezier(.2,.8,.2,1),top .28s cubic-bezier(.2,.8,.2,1),transform .18s ease;will-change:left,top}
+@media(max-width:600px){#noBtn.random-float{font-size:14px;max-width:calc(100vw - 28px)}}
 </style>
 </head>
 <body>
 
 <section class="screen active" id="s1">
   <div class="card">
-    <div class="badge">A tiny website for someone important</div>
-    <h1>Hey, Bestie.</h1>
-    <p>I made this little corner of the internet because saying this properly felt important.</p>
+    <div class="badge">A tiny website for someone very important</div>
+    <h1>Hey, Kalyani. 💜</h1>
+    <p>I made this little corner of the internet because saying this properly to <span class="highlight">Kalyani</span> felt important.</p>
     <div class="buttons"><button class="primary" onclick="next(2)">Open it 💜</button></div>
     <div class="small">Please don't judge the dramatic presentation.</div>
   </div>
@@ -150,7 +151,7 @@ html,body{width:100%;min-height:100%;overflow-x:hidden}
 <section class="screen" id="s4">
   <div class="card">
     <div class="heart">💜</div>
-    <h2>Will you forgive me?</h2>
+    <h2>Kalyani, will you forgive me?</h2>
     <p>You don't have to pretend you're not angry. Take your time. But when you're ready… I'm here.</p>
     <div class="buttons">
       <button class="primary" onclick="forgive()">I forgive you 🥹</button>
@@ -163,10 +164,10 @@ html,body{width:100%;min-height:100%;overflow-x:hidden}
 <section class="screen" id="s5">
   <div class="card">
     <div class="heart">🫂</div>
-    <h2>Thank you, bestie.</h2>
+    <h2>Thank you, Kalyani. 💜</h2>
     <p>Now come here. This friendship is <span class="highlight">not getting cancelled</span> that easily.</p>
     <div class="quote">Truce? 🤝<br><br>Same chaos. Same inside jokes. Same friendship. Just… fewer stupid mistakes.</div>
-    <div class="signature">— Your idiot best friend, who is genuinely sorry 💜</div>
+    <div class="signature">— Your idiot best friend, who is genuinely sorry to Kalyani 💜</div>
   </div>
 </section>
 
@@ -176,7 +177,7 @@ function next(n){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('s'+n).classList.add('active');
   const b=document.getElementById('noBtn');
-  if(b){b.classList.remove('random-float');b.style.left='';b.style.top='';}
+  if(b){b.classList.remove('random-float');b.style.left='';b.style.top='';b.style.right='';b.style.bottom='';b.style.transform='';}
   spawn();
 }
 function forgive(){ next(5); for(let i=0;i<22;i++) setTimeout(spawn, i*80); }
@@ -189,35 +190,42 @@ function notYet(){
     "Fair. I'll wait. 🥲",
     "Still here when you're ready.",
     "You really want to make me suffer 😭",
-    "Okay bestie, message received 💀",
+    "Okay Kalyani, message received 💀",
     "I'm not giving up that easily 💜"
   ];
   h.textContent=msgs[Math.min(noClicks-1,msgs.length-1)];
 
-  // On every click, move to a random position while keeping the button
-  // completely visible on both desktop and mobile.
+  // First fix the button as a viewport element, then measure it.
+  // This prevents it from jumping outside the mobile viewport.
   b.classList.add('random-float');
-  const r=b.getBoundingClientRect();
-  const margin=12;
-  const topSafe=window.innerWidth<=600 ? 72 : 24;
-  const maxX=Math.max(margin,window.innerWidth-r.width-margin);
-  const maxY=Math.max(topSafe,window.innerHeight-r.height-margin);
-  const x=margin+Math.random()*Math.max(0,maxX-margin);
-  const y=topSafe+Math.random()*Math.max(0,maxY-topSafe);
-  b.style.left=Math.round(x)+'px';
-  b.style.top=Math.round(y)+'px';
+  b.style.left='14px';
+  b.style.top='90px';
+  b.style.right='auto';
+  b.style.bottom='auto';
 
-  // Small playful scale on later attempts.
-  b.style.transform=noClicks%2===0?'rotate(-2deg)':'rotate(2deg)';
+  requestAnimationFrame(()=>{
+    const r=b.getBoundingClientRect();
+    const margin=14;
+    const topSafe=window.innerWidth<=600 ? 76 : 24;
+    const maxX=Math.max(margin, window.innerWidth-r.width-margin);
+    const maxY=Math.max(topSafe, window.innerHeight-r.height-margin);
+    const x=margin + Math.random()*Math.max(0,maxX-margin);
+    const y=topSafe + Math.random()*Math.max(0,maxY-topSafe);
+    b.style.left=Math.round(x)+'px';
+    b.style.top=Math.round(y)+'px';
+    b.style.transform=noClicks%2===0?'rotate(-2deg)':'rotate(2deg)';
+  });
 }
 
 window.addEventListener('resize',()=>{
   const b=document.getElementById('noBtn');
   if(!b || !b.classList.contains('random-float')) return;
   const r=b.getBoundingClientRect();
-  const x=Math.min(Math.max(10,r.left),Math.max(10,window.innerWidth-r.width-10));
-  const y=Math.min(Math.max(65,r.top),Math.max(65,window.innerHeight-r.height-10));
-  b.style.left=x+'px'; b.style.top=y+'px';
+  const margin=10;
+  const x=Math.min(Math.max(margin,r.left),Math.max(margin,window.innerWidth-r.width-margin));
+  const y=Math.min(Math.max(70,r.top),Math.max(70,window.innerHeight-r.height-margin));
+  b.style.left=Math.round(x)+'px';
+  b.style.top=Math.round(y)+'px';
 });
 
 function spawn(){
